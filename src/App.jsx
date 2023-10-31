@@ -1,75 +1,121 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import data from './assets/output.json'
 
 export default App
 
 function App() {
-  const [inData, setInData] = useState("")
-  const [outData, setOutData] = useState("")
 
-  const fetchData = (e)=>{
-    e.preventDefault();
-    setOutData(data[inData]);
+  const [personData, setPersonData] = useState({
+    roll: '',
+    name: '',
+    photo: '',
+    date: '',
+    period: [],
+  });
+
+
+  const handleButtonClick = (arr) =>{
+    setPersonData({
+      ...personData,
+      period: arr,
+    })
   }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setPersonData({
+      ...personData,
+      [name]: value,
+    })
+  }
+
+  const fetchData = () => {
+    const fetchedData = data[personData.roll];
+    setPersonData({
+      ...personData,
+      name: fetchedData.Name,
+      photo: fetchedData.Image,
+    });
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // You can add your form submission logic here
+    console.log(JSON.stringify(personData));
+  };
 
   return (
     <>
-      <form id='box'>
+      <form id='box' onSubmit={handleSubmit}>
         <table>
           <tr>
             <td>Enter Roll No:</td>
             <td><span id='roll-wrapper'>
-              <input type="text" id="code-input" placeholder="Enter your roll" value={inData} onChange={e => setInData(e.target.value)}/>
+              <input name="roll" type="text" id="code-input" placeholder="Enter your roll" value={personData.roll} onChange={handleChange} />
               <button id="verify-button" onClick={fetchData}>Verify</button>
-          </span></td>
+            </span></td>
           </tr>
           <tr>
             <td>Date:</td>
             <td>
-              <input type="date" />
+              <input name="date" type="date" value={personData.date} onChange={handleChange} />
             </td>
           </tr>
           <tr>
             <td>Period:</td>
             <td>
-            <div id="period" onClick={periodSelected}>
-              <button id="1">1</button>
-              <button id="2">2</button>
-              <button id="3">3</button>
-              <button id="4">4</button>
-              <br/>
-              <button id="5">5</button>
-              <button id="6">6</button>
-              <button id="7">7</button>
-              <button id="8">8</button>
-            </div>
+              <Buttons updateForm={handleButtonClick}/>
             </td>
           </tr>
-
-          
+          <tr>
+            <td colSpan="2"><button type="submit">Submit</button></td>
+          </tr>
         </table>
       </form>
-      <hr/>
-      {outData && <DataComponent prop={outData} />}
+      <hr />
+      {personData && <DataComponent data={personData} />}
     </>
   )
 }
 
-function periodSelected(e){
-  e.preventDefault();
-  let but = e.target;
-  if(but.tagName!="BUTTON") return;
-  but.style.background="blue"
+function Buttons({updateForm}) {
+  const [selectedButs, setSelectedButs] = useState([]);
+
+  useEffect(() => {
+    updateForm(selectedButs);
+   }, [selectedButs]);
+
+  const buttons = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+  const buttonClicked = (but) => {
+    if (selectedButs.includes(but)) {
+      setSelectedButs(selectedButs.filter((selected) => selected != but))
+    }
+    else {
+      setSelectedButs([...selectedButs, but])
+    }
+  }
+
+  return (
+    <div>
+      {buttons.map((but, indx) => (
+        <button key={indx} onClick={() =>{ buttonClicked(but)}} className={selectedButs.includes(but) ? 'selectedPeriod' : ''}>
+          {but}
+        </button>
+      ))}
+    </div>
+  )
 }
 
-
-function DataComponent(prop){
-  let data = prop.prop;
+function DataComponent({data}) {
   return (
     <>
-      <div>Name: {data.Name}</div>
-      <img src={data.Image} />
+    <h4>Data saved-</h4>
+      <img src={data.photo} width="30%" alt="_photo_here_"/>
+      <div>Roll: {data.roll}</div>
+      <div>Name: {data.name}</div>
+      <div>Date: {data.date}</div>
+      <div>Period/s: {data.period.map(a=>a+" ")}</div>
     </>
   )
 }

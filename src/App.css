@@ -45,6 +45,10 @@
   margin: 0.3rem 0.2rem;
 }
 
+.selectedPeriod{
+  background-color: blue;
+}
+
 
 /*Below this, everything is useless*/
 .logo {
