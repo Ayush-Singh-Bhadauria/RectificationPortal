@@ -1,3 +1,16 @@
+### Task List
+
+- [ ] Create a fancy user side interface, insert a small "Admin sign in" button at corner
+- [ ] Create a login page and a dashboard page for admin userlogin
+- [x] Create server and handle the login functions  
+- [ ] MongoDB database to save information
+- [ ] Take measures for data security
+- [ ] User authentication via Firebase. (or whatsapp OTP)
+
+**Need more info? Call me up!** 
+
+---
+
 # React + Vite
 
 
